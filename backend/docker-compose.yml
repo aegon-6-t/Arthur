@@ -9,6 +9,8 @@ services:
       MYSQL_DATABASE: "planningDB"
       MYSQL_USER: "planning_app"
       MYSQL_PASSWORD: "${MYSQL_APP_PASSWORD:-apppassword}"
+    ports:
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d:ro
