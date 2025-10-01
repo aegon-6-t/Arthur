@@ -1,0 +1,53 @@
+name: bite
+
+services:
+  mariadb:
+    image: mariadb:10.6
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-rootpassword}"
+      MYSQL_DATABASE: "planningDB"
+      MYSQL_USER: "planning_app"
+      MYSQL_PASSWORD: "${MYSQL_APP_PASSWORD:-apppassword}"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    networks:
+      - internal_net
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: root
+      PMA_PASSWORD: "${MYSQL_ROOT_PASSWORD:-rootpassword}"
+    ports:
+      - "8081:80"
+    depends_on:
+      - mariadb
+    networks:
+      - internal_net
+    restart: unless-stopped
+
+  apache:
+    image: httpd:2.4
+    container_name: apache-proxy
+    #volumes:
+      #- ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      #- ./apache/certs:/usr/local/apache2/conf/certs:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - internal_net
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  wireguard_config:
+
+networks:
+  internal_net:
+    driver: bridge
