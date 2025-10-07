@@ -13,13 +13,14 @@ exports.createUser = async ({ prenom, nom, email, mot_de_passe }) => {
       if (err) return reject(new Error(`Erreur connexion AD: ${err.message}`));
 
       const cn = `${prenom} ${nom}`;
-      const dn = `CN=${cn},OU=Utilisateurs,${config.baseDN}`;
+      const dn = `CN=${cn},${config.baseDN}`;
       const entry = {
         cn,
         sn: nom,
         givenName: prenom,
         displayName: cn,
         objectClass: ['top', 'person', 'organizationalPerson', 'user'],
+        userAccountControl: 512,
         sAMAccountName: email.split('@')[0],
         userPrincipalName: email,
       };
