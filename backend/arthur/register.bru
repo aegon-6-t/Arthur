@@ -1,0 +1,25 @@
+meta {
+  name: register
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/api/auth/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "nom":"test", 
+    "prenom":"test", 
+    "role":"user",
+    "email":"test@planning.com",
+    "mot_de_passe":"admin123"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

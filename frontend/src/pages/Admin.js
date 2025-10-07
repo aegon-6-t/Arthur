@@ -44,14 +44,17 @@ const Admin = () => {
 
       // Charger les utilisateurs
       const usersResponse = await adminService.users.getAll();
-      setUsers(usersResponse.data || []);
+      console.log("usersResponse.data =", usersResponse.data);
+      setUsers(usersResponse?.data?.data?.users || []);
 
       // Charger les événements
       const eventsResponse = await adminService.events.getAll();
-      setEvents(eventsResponse.data || []);
+      console.log("eventsResponse.data =", eventsResponse.data);
+      setEvents(eventsResponse?.data?.data?.events || []);
 
       // Charger les statistiques globales
       const statsResponse = await adminService.getGlobalStatistics();
+      console.log("statsResponse.data =", statsResponse.data);
       setStatistics(statsResponse.data.data);
 
     } catch (error) {
