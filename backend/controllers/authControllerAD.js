@@ -4,6 +4,7 @@
  */
 
 const jwt = require('jsonwebtoken');
+const adService = require('../services/ad.service');
 const ActiveDirectory = require('activedirectory2'); // ou activedirectory selon le module installé
 
 const config = {
@@ -115,6 +116,21 @@ class AuthControllerAD {
     static async logout(req, res) {
         res.json({ success: true, message: 'Déconnexion réussie, supprimez le token côté client' });
     }
+
+    static async register (req, res) {
+        try {
+            const { prenom, nom, email, mot_de_passe } = req.body;
+
+            if (!prenom || !nom || !email || !mot_de_passe) {
+            return res.status(400).json({ success: false, message: 'Champs requis manquants' });
+            }
+
+            const message = await adService.createUser({ prenom, nom, email, mot_de_passe });
+            res.status(201).json({ success: true, message });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+        };
 }
 
 module.exports = AuthControllerAD;

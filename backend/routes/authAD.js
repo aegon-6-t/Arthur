@@ -28,4 +28,6 @@ router.get('/profile', verifyJWT, AuthControllerAD.getProfile);
  */
 router.post('/logout', AuthControllerAD.logout);
 
+router.post('/register', AuthControllerAD.register);
+
 module.exports = router;
