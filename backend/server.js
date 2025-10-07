@@ -39,20 +39,24 @@ app.use(cors({
     credentials: true
 }));
 
-// Limitation du taux de requêtes pour éviter les attaques par force brute
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: process.env.NODE_ENV === 'production' ? 100 : 100000000,
-    message: 'Trop de requêtes depuis cette IP, veuillez réessayer plus tard.'
-});
-app.use(limiter);
+if (process.env.NODE_ENV === 'production') {
+  // 🚀 En production : limites normales
+  limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 min
+    max: 100,
+    message: 'Trop de requêtes depuis cette IP, veuillez réessayer plus tard.',
+  });
 
-// Limitation spéciale pour les tentatives de connexion
-const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // Maximum 5 tentatives de connexion par IP
-    message: 'Trop de tentatives de connexion, veuillez réessayer dans 15 minutes.'
-});
+  loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100, // 5 tentatives max en 15 min
+    message: 'Trop de tentatives de connexion, veuillez réessayer dans 15 minutes.',
+  });
+} else {
+  // 🧑‍💻 En dev : aucune limite
+  limiter = (req, res, next) => next();
+  loginLimiter = (req, res, next) => next();
+}
 
 // Middleware pour parser les données JSON et URL
 app.use(express.json({ limit: '10mb' }));
